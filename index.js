@@ -2,9 +2,11 @@ const express = require('express')
 const puppeteer = require('puppeteer');
 var cors = require('cors')
 const app = express()
-const sowTemplate = require('./sowTemplate.js')
-port = process.env.PORT || 3000;
+const sowTemplate = require('./src/templates/sowTemplate.js')
+const invoiceTemplate = require('./src/templates/invoiceTemplate.js')
+var fs = require("fs");
 
+port = process.env.PORT || 5000;
 
 app.use(express.json());
 app.use(cors())
@@ -13,27 +15,44 @@ app.post('/file/sow', (req, res) => {
 
     (async () => {
         var data = await req.body
+        var file = data.UserName + "-SOW.pdf"
         try {
             var supportEmail = ""
             var userEmail = ""
             var packageName = ""
             var terms = ""
 
-            data.supportEmail.map((n) => {
-                supportEmail = supportEmail + `<p style="font-size: 12pt;"> ${n} </p>`
-            })
+            try {
+                data.supportEmail.map((n) => {
+                    supportEmail = supportEmail + `<p style="font-size: 12pt;"> ${n} </p>`
+                })
+            } catch (error) {
+                supportEmail = data.supportEmail
+            }
 
-            data.userEmail.map((n) => {
-                userEmail = userEmail + `<p style="font-size: 12pt;"> ${n} </p>`
-            })
+            try {
+                data.userEmail.map((n) => {
+                    userEmail = userEmail + `<p style="font-size: 12pt;"> ${n} </p>`
+                })
+            } catch (error) {
+                userEmail = data.userEmail
+            }
 
-            data.packageName.map((n) => {
-                packageName = packageName + `<p style="font-size: 12pt;"> ${n} </p>`
-            })
+            try {
+                data.packageName.map((n) => {
+                    packageName = packageName + `<p style="font-size: 12pt;"> ${n} </p>`
+                })
+            } catch (error) {
+                packageName = data.packageName
+            }
 
-            data.terms.map((n) => {
-                terms = terms + `<li style='margin: 5px 0px;'> ${n} </li>`
-            })
+            try {
+                data.terms.map((n) => {
+                    terms = terms + `<li style='margin: 5px 0px;'> ${n} </li>`
+                })
+            } catch (error) {
+                terms = data.terms
+            }
 
             var date = new Date().toUTCString();
 
@@ -54,17 +73,81 @@ app.post('/file/sow', (req, res) => {
             const browser = await puppeteer.launch();
             const page = await browser.newPage();
             await page.setContent(html)
-            await page.pdf({ path: data.UserName + '-SOW.pdf' });
+            await page.pdf({ path: file });
             await browser.close();
-            await res.status(200).download(`./${data.UserName}-SOW.pdf`)
+            console.log('file created successful!');
+            fs.readFile(file, function (err, fileBuffer) {
+                if (err) throw err;
+                fs.unlinkSync(file)
+                console.log('deleted successful!');
+                res.status(200).send(fileBuffer)
+            });
         }
         catch {
             res.status(404).send("Error While generating the file!")
         }
-
     })();
 })
 
+app.post('/PrintInvoice', (req, res) => {
+    (async () => {
+        var data = await req.body
+        var file = data.UserName + "-Invoice.pdf"
+        try {
+
+            var year = new Date().getFullYear();
+            var packageDetails = ""
+            try {
+                data.services.map((service) => {
+                    packageDetails = packageDetails + `<div class="custom-table-row">
+                    <div class="custom-table-col is-double">
+                        <span>${service.packageName}</span>
+                    </div>
+                    <div class="custom-table-col">
+                        <span>${service.packageQuantity}</span>
+                    </div>
+                    <div class="custom-table-col">
+                        <span>${service.packagePrice}</span>
+                    </div>
+                    <div class="custom-table-col">
+                        <span></span>
+                    </div>
+                </div>`
+                })
+            } catch (error) {
+                packageDetails = data.services
+            }
+
+
+            html = invoiceTemplate.replace("{{Invoice}}", "Invoice")
+                .replace("{{customer name}}", data.customerName)
+                .replace("{{email}}", data.customerEmail)
+                .replace("{{order date}}", data.orderDate)
+                .replace("{{quotation ref}}", data.quotationRef)
+                .replace("{{package_details}}", packageDetails)
+                .replace("{{total price}}", data.totalPrice)
+                .replace("{{year}}", year)
+
+
+            const browser = await puppeteer.launch();
+            const page = await browser.newPage();
+            await page.setContent(html)
+            await page.pdf({ path: file });
+            await browser.close();
+
+            console.log('file created successful!');
+            fs.readFile(file, function (err, fileBuffer) {
+                if (err) throw err;
+                fs.unlinkSync(file)
+                console.log('deleted successful!');
+                res.status(200).send(fileBuffer)
+            });
+        }
+        catch {
+            res.status(404).send("Error While generating the file!")
+        }
+    })();
+})
 
 app.get('/', (req, res) => {
     res.status(200).send(`Service is running on port : ${port}`);
@@ -73,3 +156,4 @@ app.get('/', (req, res) => {
 app.listen(port, () => {
     console.log(`SOW app listening on port : ${port}`)
 })
+
