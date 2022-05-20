@@ -83,8 +83,8 @@ app.post('/file/sow', (req, res) => {
                 res.status(200).send(fileBuffer)
             });
         }
-        catch {
-            res.status(404).send("Error While generating the file!")
+        catch(ex) {
+            res.status(404).send(ex.toString());
         }
     })();
 })
