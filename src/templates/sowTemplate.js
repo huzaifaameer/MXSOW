@@ -1,4 +1,4 @@
-module.exports =  `<!DOCTYPE html>
+module.exports = `<!DOCTYPE html>
 <html lang='en'>
 
 <head>
@@ -9,9 +9,18 @@ module.exports =  `<!DOCTYPE html>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Raleway:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
     </style>
+    <style>
+        body{
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+        .newpage{
+            page-break-before: always
+        }
+    </style>
 </head>
 
-<body style='margin: 30px; font-family: raleway, sans-serif; background-color: #0003;'>
+<body style='margin: 30px; font-family: raleway, sans-serif; background-color: #0003; padding:40px 0px;'>
     <div style='padding:30px;background-color: #ffffff; margin-right: auto; margin-left: auto;position: relative;'>
 
 
@@ -100,12 +109,13 @@ module.exports =  `<!DOCTYPE html>
         </div>
 
 
-        <div style='margin: 100px 0px;'>
+        <div style='margin:0px 0px; padding-top: 50px;' class='newpage'>
             <p style='margin: 0px; font-weight: 800; font-size: 12pt; font-family: montserrat, sans-serif;'>Selected
-                Service</p>
-            <p style='margin: 0px;'>{{Service name}} : {{Sub-Service name}}</p>
-            <p style='font-weight: 800;'>e.g.,</p>
-            <p style='font-weight: 800; font-size: 12pt;'>Cyber Security: Web security vulnerability assessment </p>
+                Services</p>
+            <p style='margin: 1em 0px;'>{{Service name}}</p>
+            <p style='margin: 0px; font-weight: 800; font-size: 12pt; font-family: montserrat, sans-serif;'>Selected
+                Sub Services</p>
+            <p style='margin: 1em 0px;'>{{Sub-Service name}}</p>
             <p style='font-size: 13pt; font-family: calibri, sans-serif; margin-bottom: 0.3em; font-weight: 800;'>Scope
                 of Work</p>
             <p style='font-weight:800; font-size: 13pt; margin-top: 0px;'>Package Details</p>
@@ -177,7 +187,7 @@ module.exports =  `<!DOCTYPE html>
                     </tr>
                 </tbody>
             </table>
-            <p style='font-size: 13pt; font-weight: 800; font-family: calibri, sans-serif; margin: 0px;'>References</p>
+            <p style='font-size: 13pt; font-weight: 800; font-family: calibri, sans-serif; margin:40px 0px 0px 0px;'>References</p>
             <p style='text-align: justify; font-size: 12pt; margin-top: 0px;'>In case you need additional document to be
                 associated with it kindly share via email with reference to your <span
                     style='font-weight: 800;'>invoice_id, project_ID</span> and date of your service or contact with our
