@@ -70,7 +70,7 @@ app.post('/file/sow', (req, res) => {
                 .replace("{{Same date of SOW generation}}", date)
                 .replace("{{Terms 1}}", terms)
 
-            const browser = await puppeteer.launch({args: ['--no-sandbox']});
+            const browser = await puppeteer.launch();
             const page = await browser.newPage();
             await page.setContent(html)
             await page.pdf({ path: file });
@@ -83,7 +83,7 @@ app.post('/file/sow', (req, res) => {
                 res.status(200).send(fileBuffer)
             });
         }
-        catch (ex){
+        catch (ex) {
             res.status(404).send(ex.toString());
         }
     })();
