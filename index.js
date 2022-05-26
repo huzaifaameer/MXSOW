@@ -4,12 +4,30 @@ var cors = require('cors')
 const app = express()
 const sowTemplate = require('./src/templates/sowTemplate.js')
 const invoiceTemplate = require('./src/templates/invoiceTemplate.js')
+const quotationTemplate = require('./src/templates/quotationTemplate.js')
 var fs = require("fs");
 
 port = process.env.PORT || 5000;
 
 app.use(express.json());
 app.use(cors())
+
+
+
+
+
+async function createPDF(html, file) {
+    const browser = await puppeteer.launch();
+    // const browser = await puppeteer.launch({ executablePath: '/snap/bin/chromium' });
+
+    const page = await browser.newPage();
+    await page.setContent(html)
+    await page.pdf({ path: file });
+    await browser.close();
+    console.log('file created successful!');
+    return
+}
+
 
 app.post('/file/sow', (req, res) => {
 
@@ -70,21 +88,18 @@ app.post('/file/sow', (req, res) => {
                 .replace("{{Same date of SOW generation}}", date)
                 .replace("{{Terms 1}}", terms)
 
-            const browser = await puppeteer.launch();
-            const page = await browser.newPage();
-            await page.setContent(html)
-            await page.pdf({ path: file });
-            await browser.close();
-            console.log('file created successful!');
-            fs.readFile(file, function (err, fileBuffer) {
-                if (err) throw err;
-                fs.unlinkSync(file)
-                console.log('deleted successful!');
-                res.status(200).send(fileBuffer)
-            });
+            createPDF(html, file).then(async () => {
+
+                fs.readFile(file, function (err, fileBuffer) {
+                    if (err) throw err;
+                    fs.unlinkSync(file)
+                    console.log('deleted successful!');
+                    res.status(200).send(fileBuffer)
+                });
+            })
         }
-        catch {
-            res.status(404).send("Error While generating the file!")
+        catch (err) {
+            res.status(404).send(err.toString())
         }
     })();
 })
@@ -129,31 +144,94 @@ app.post('/PrintInvoice', (req, res) => {
                 .replace("{{year}}", year)
 
 
-            const browser = await puppeteer.launch();
-            const page = await browser.newPage();
-            await page.setContent(html)
-            await page.pdf({ path: file });
-            await browser.close();
+            createPDF(html, file).then(async () => {
 
-            console.log('file created successful!');
-            fs.readFile(file, function (err, fileBuffer) {
-                if (err) throw err;
-                fs.unlinkSync(file)
-                console.log('deleted successful!');
-                res.status(200).send(fileBuffer)
-            });
+                fs.readFile(file, function (err, fileBuffer) {
+                    if (err) throw err;
+                    fs.unlinkSync(file)
+                    console.log('deleted successful!');
+                    res.status(200).send(fileBuffer)
+                });
+            })
         }
-        catch {
-            res.status(404).send("Error While generating the file!")
+        catch (err) {
+            res.status(404).send(err.toString())
         }
     })();
 })
 
+
+app.post('/PrintQuotation', (req, res) => {
+    (async () => {
+        var data = await req.body
+        var file = data.refNum + "-Quotation.pdf"
+        try {
+
+            var subServiceName = ""
+            var packageName = ""
+            var price = ""
+            var terms = ""
+
+            try {
+                data.subServiceNames.map((n) => {
+                    subServiceName = subServiceName + `<li>${n}<i class="fa fa-trash delete-icon"></i></li>`
+                })
+            } catch (error) {
+            }
+
+            try {
+                data.packageNames.map((n) => {
+                    packageName = packageName + `<li>${n}</li>`
+                })
+            } catch (error) {
+            }
+
+            try {
+                data.prices.map((n) => {
+                    price = price + `<li>${n}</li>`
+                })
+            } catch (error) {
+            }
+
+            try {
+                data.termsAndConditions.map((n) => {
+                    terms = terms + `<li>${n}</li>`
+                })
+            } catch (error) {
+                terms = data.termsAndConditions
+            }
+
+            html = quotationTemplate.replace("{{refNum}}", data.refNum)
+                .replace("{{serviceName}}", data.serviceName)
+                .replace("{{subServiceName}}", subServiceName)
+                .replace("{{packageName}}", packageName)
+                .replace("{{packagePrice}}", price)
+                .replace("{{totalPrice}}", data.totalPrice)
+                .replace("{{termsAndConditions}}", terms)
+
+            createPDF(html, file).then(async () => {
+
+                fs.readFile(file, function (err, fileBuffer) {
+                    if (err) throw err;
+                    fs.unlinkSync(file)
+                    console.log('deleted successful!');
+                    res.status(200).send(fileBuffer)
+                });
+            })
+
+        }
+        catch (err) {
+            res.status(404).send(err.toString())
+        }
+    })();
+})
+
+
 app.get('/', (req, res) => {
-    res.status(200).send(`Service is running on port : ${port}`);
+    res.status(200).send(`PDF service is up & running.`);
 })
 
 app.listen(port, () => {
-    console.log(`SOW app listening on port : ${port}`)
+    console.log(`PDF service listening on port : ${port}`)
 })
 
