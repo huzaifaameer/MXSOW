@@ -1,4 +1,4 @@
-module.exports =  `<!DOCTYPE html>
+module.exports = `<!DOCTYPE html>
 <html lang='en'>
 
 <head>
@@ -20,7 +20,7 @@ module.exports =  `<!DOCTYPE html>
     </style>
 </head>
 
-<body style='margin: 30px; font-family: raleway, sans-serif; background-color: #0003;'>
+<body style='margin: 30px; font-family: raleway, sans-serif; background-color: #0003; padding:40px 0px;'>
     <div style='padding:30px;background-color: #ffffff; margin-right: auto; margin-left: auto;position: relative;'>
 
 
@@ -187,7 +187,7 @@ module.exports =  `<!DOCTYPE html>
                     </tr>
                 </tbody>
             </table>
-            <p style='font-size: 13pt; font-weight: 800; font-family: calibri, sans-serif; margin: 0px;'>References</p>
+            <p style='font-size: 13pt; font-weight: 800; font-family: calibri, sans-serif; margin:40px 0px 0px 0px;'>References</p>
             <p style='text-align: justify; font-size: 12pt; margin-top: 0px;'>In case you need additional document to be
                 associated with it kindly share via email with reference to your <span
                     style='font-weight: 800;'>invoice_id, project_ID</span> and date of your service or contact with our
