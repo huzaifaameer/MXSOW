@@ -128,10 +128,9 @@ module.exports = `<!DOCTYPE html>
             <br>
             <p style='font-size: 13pt; font-weight: 800; font-family: calibri, sans-serif; margin: 0px;'>SOW Validity
             </p>
-            <p style='text-align: justify; font-size: 12pt; margin-top: 0px;'>This document is valid till next <span
-                    style='font-weight:800'>15 business days</span> after its generation and pre-signed stage. Once the
-                document is signed it will be considered as the head start and main document of project kick-off,
-                planning and delivery.</p>
+            <p style='text-align: justify; font-size: 12pt; margin-top: 0px;'>This document is valid for <span
+
+                    style='font-weight:800'>15 business days</span> after its generation and pre-signing stage. Once you sign, it will be the head start and main document of project kick-off, planning and delivery.</p>
             <p style='font-size: 13pt; font-weight: 800; font-family: calibri, sans-serif; margin: 0px;'>Point of
                 Contact</p>
             <div style='width: 100%; display: flex; border-bottom: 1px solid #b5b5b5;'>
